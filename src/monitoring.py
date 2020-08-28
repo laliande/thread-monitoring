@@ -3,6 +3,8 @@ from datetime import datetime
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 from mpl_finance import candlestick_ohlc
+import matplotlib
+matplotlib.use('agg')
 
 
 def get_ohlcv(exchange, symbol, timeframe):
@@ -17,7 +19,8 @@ def get_ohlcv(exchange, symbol, timeframe):
 def create_chart(quotes, format):
     fig, ax = plt.subplots()
     candlestick_ohlc(ax, quotes[-80:], width=0.0003,
-                     colorup='green', colordown='black')
+                     colorup='green', colordown='white')
+    ax.set_facecolor('#16151A')
     ax.xaxis.set_major_formatter(mdates.DateFormatter(format))
     ax.xaxis_date()
     ax.spines['top'].set_visible(False)
@@ -28,8 +31,11 @@ def create_chart(quotes, format):
     plt.savefig('chart.png')
 
 
-# exchange = ccxt.binance()
-# symbol = 'BTC/USDT'
-# quotes = get_ohlcv(exchange, symbol, '1m')
-# print(quotes)
-# create_chart(quotes, '%H:%M')
+def get_date_type(timeframe):
+    if timeframe[-1] == 'h':
+        format_time = '%d %H:%M'
+    elif timeframe[-1] == 'm':
+        format_time = '%H:%M'
+    elif timeframe[-1] == 'd':
+        format_time = '%D'
+    return format_time
