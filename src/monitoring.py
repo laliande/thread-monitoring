@@ -4,6 +4,7 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 from mpl_finance import candlestick_ohlc
 import matplotlib
+import sys
 matplotlib.use('agg')
 
 
@@ -28,7 +29,7 @@ def create_chart(quotes, format):
     ax.spines['bottom'].set_visible(False)
     ax.spines['left'].set_visible(False)
     plt.grid(color='grey', linestyle=':', linewidth=0.5)
-    plt.savefig('chart.png')
+    plt.savefig(sys.path[0] + '\\src\\telegram\\chart.png')
 
 
 def get_date_type(timeframe):
