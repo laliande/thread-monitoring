@@ -68,9 +68,9 @@ def query_photo(inline_query):
         img = uploadphoto()
         r = types.InlineQueryResultPhoto('1',
                                          photo_url=img[0],
-                                         thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/v1598735230/35_o9lsxd.png', photo_width=300, photo_height=300)
+                                         thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/v1598735230/35_o9lsxd.png', photo_width=600, photo_height=600)
         bot.answer_inline_query(inline_query.id, [r], cache_time=0)
-        destroyphoto(img[1])
+        # destroyphoto(img[1])
 
     except Exception as e:
         print(e)
