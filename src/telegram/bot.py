@@ -61,15 +61,15 @@ def send_photo(message):
         img.close()
 
 
-@bot.inline_handler(lambda query: query.query == 'BTC/USDT')
+@bot.inline_handler(lambda query: query.query == 'get')
 def query_photo(inline_query):
     try:
         create_graphic()
         img = uploadphoto()
         r = types.InlineQueryResultPhoto('1',
-                                         img[0],
-                                         img[0], photo_width=400, photo_height=400)
-        bot.answer_inline_query(inline_query.id, [r], cache_time=1)
+                                         photo_url=img[0],
+                                         thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/v1598735230/35_o9lsxd.png', photo_width=300, photo_height=300)
+        bot.answer_inline_query(inline_query.id, [r], cache_time=0)
         destroyphoto(img[1])
 
     except Exception as e:
