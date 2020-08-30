@@ -9,10 +9,10 @@ import time
 import requests
 import cloudinary.uploader
 from src.conf.config import cloudinary_config
+import random
 
 
 exchange = ccxt.binance()
-
 symbol = 'BTC/USDT'
 timeframe = '1m'
 start_message = 'thread monitoring bot BTC/USDT in binance'
@@ -35,16 +35,6 @@ def create_graphic():
     create_chart(quotes, format_time)
 
 
-def uploadphoto():
-    response = cloudinary.uploader.upload(
-        sys.path[0] + '\\src\\telegram\\chart.png', crop="limit", tags="samples", width=600, height=600)
-    return (response['url'], response['public_id'])
-
-
-def destroyphoto(public_id):
-    cloudinary.uploader.destroy(public_id=public_id)
-
-
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
     bot.reply_to(message, start_message, reply_markup=get_graphic)
@@ -61,16 +51,18 @@ def send_photo(message):
         img.close()
 
 
-@bot.inline_handler(lambda query: query.query == 'get')
+@bot.inline_handler(lambda query: len(query.query) >= 0)
 def query_photo(inline_query):
     try:
         create_graphic()
-        img = uploadphoto()
+        photo_url = 'https://aaf85aefabc9.ngrok.io/get-chart/' + \
+            str(random.randint(0, 100))
+        thumb_url = 'https://aaf85aefabc9.ngrok.io/get-BTCUSDT/' + \
+            str(random.randint(0, 100))
         r = types.InlineQueryResultPhoto('1',
-                                         photo_url=img[0],
-                                         thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/v1598735230/35_o9lsxd.png', photo_width=600, photo_height=600)
+                                         photo_url=photo_url,
+                                         thumb_url=thumb_url, photo_height=200, photo_width=200)
         bot.answer_inline_query(inline_query.id, [r], cache_time=0)
-        # destroyphoto(img[1])
 
     except Exception as e:
         print(e)
@@ -80,10 +72,3 @@ def main_loop():
     bot.polling(True)
     while 1:
         time.sleep(3)
-
-
-try:
-    main_loop()
-except KeyboardInterrupt:
-    print('\nExiting by user request.\n')
-    sys.exit(0)
