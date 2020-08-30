@@ -1,5 +1,5 @@
 import base64
-from src.conf.config import token, key_imgbb
+from src.conf.config import token
 from src.monitoring import get_date_type, get_ohlcv, create_chart
 import ccxt
 import telebot
@@ -7,32 +7,25 @@ import sys
 from telebot import types
 import time
 import requests
-import cloudinary.uploader
-from src.conf.config import cloudinary_config
 from time import time
 
 
 exchange = ccxt.binance()
-symbol = 'BTC/USDT'
+symbols = ['LTC/USDT', 'XRP/USDT', 'ETH/USDT', 'BNB/USDT', 'BTC/USDT']
 timeframe = '1m'
-start_message = 'thread monitoring bot BTC/USDT in binance'
+start_message = 'Thread monitoring bot in binance'
 exchange = ccxt.binance()
 bot = telebot.TeleBot(token)
 
 get_graphic = types.ReplyKeyboardMarkup()
-get_graphic.add('BTC/USDT')
-
-cloudinary.config(
-    cloud_name=cloudinary_config['cloud_name'],
-    api_key=cloudinary_config['api_key'],
-    api_secret=cloudinary_config['api_secret']
-)
+for symbol in symbols:
+    get_graphic.add(symbol)
 
 
-def create_graphic():
+def create_graphic(label):
     format_time = get_date_type(timeframe)
     quotes = get_ohlcv(exchange, symbol, timeframe)
-    create_chart(quotes, format_time, label=symbol)
+    create_chart(quotes, format_time, label=label)
 
 
 @bot.message_handler(commands=['start', 'help'])
@@ -42,28 +35,31 @@ def send_welcome(message):
 
 @bot.message_handler(content_types=['text'])
 def send_photo(message):
-    if message.text.lower() == 'btc/usdt':
-        create_graphic()
-        bot.send_chat_action(message.chat.id, 'upload_photo')
-        img = open(sys.path[0] + '\\src\\telegram\\chart.png', 'rb')
-        bot.send_photo(message.chat.id, img,
-                       reply_markup=get_graphic)
-        img.close()
+    for symbol in symbols:
+        if message.text == symbol:
+            create_graphic(label=symbol)
+            bot.send_chat_action(message.chat.id, 'upload_photo')
+            img = open(sys.path[0] + '\\src\\telegram\\chart.png', 'rb')
+            bot.send_photo(message.chat.id, img,
+                           reply_markup=get_graphic)
+            img.close()
 
 
 @bot.inline_handler(lambda query: len(query.query) >= 0)
 def query_photo(inline_query):
     try:
-        create_graphic()
-        photo_url = 'https://aaf85aefabc9.ngrok.io/get-chart/' + \
-            str(int(time()))
-        thumb_url = 'https://aaf85aefabc9.ngrok.io/get-BTCUSDT/' + \
-            str(int(time()))
-        r = types.InlineQueryResultPhoto('1',
-                                         photo_url=photo_url,
-                                         thumb_url=thumb_url, photo_height=200, photo_width=200)
-        bot.answer_inline_query(inline_query.id, [r], cache_time=0)
-
+        offers = []
+        for i in range(len(symbols)):
+            create_graphic(label=symbols[i])
+            photo_url = 'https://aaf85aefabc9.ngrok.io/get-chart/' + \
+                str(int(time()))
+            thumb_url = 'https://aaf85aefabc9.ngrok.io/get-BTCUSDT/' + \
+                str(int(time()))
+            r = types.InlineQueryResultPhoto(i,
+                                             photo_url=photo_url,
+                                             thumb_url=thumb_url, photo_height=200, photo_width=200)
+            offers.append(r)
+        bot.answer_inline_query(inline_query.id, offers, cache_time=0)
     except Exception as e:
         print(e)
 
