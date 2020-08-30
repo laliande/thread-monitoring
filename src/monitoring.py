@@ -19,17 +19,29 @@ def get_ohlcv(exchange, symbol, timeframe):
     return ohlcv
 
 
-def create_chart(quotes, format):
+def create_chart(quotes, format, label):
     fig, ax = plt.subplots()
     candlestick_ohlc(ax, quotes[-80:], width=0.0003,
-                     colorup='green', colordown='white')
-    ax.set_facecolor('#16151A')
+                     colorup='#9933FF', colordown='white')
+    plt.plot(color='white')
+    plt.style.use("dark_background")
+    plt.title(label, color='grey')
+
+    ax.set_facecolor('black')
+    ax.spines['bottom'].set_color('grey')
+    ax.spines['top'].set_color('grey')
+    ax.spines['right'].set_color('grey')
+    ax.spines['left'].set_color('grey')
+    ax.tick_params(color='grey', labelcolor='grey')
+
     ax.xaxis.set_major_formatter(mdates.DateFormatter(format))
     ax.xaxis_date()
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['bottom'].set_visible(False)
-    ax.spines['left'].set_visible(False)
+
+    # ax.spines['top'].set_visible(False)
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['bottom'].set_visible(False)
+    # ax.spines['left'].set_visible(False)
+
     plt.grid(color='grey', linestyle=':', linewidth=0.5)
     plt.savefig(sys.path[0] + '\\src\\telegram\\chart.png')
 

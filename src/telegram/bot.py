@@ -9,7 +9,7 @@ import time
 import requests
 import cloudinary.uploader
 from src.conf.config import cloudinary_config
-import random
+from time import time
 
 
 exchange = ccxt.binance()
@@ -32,7 +32,7 @@ cloudinary.config(
 def create_graphic():
     format_time = get_date_type(timeframe)
     quotes = get_ohlcv(exchange, symbol, timeframe)
-    create_chart(quotes, format_time)
+    create_chart(quotes, format_time, label=symbol)
 
 
 @bot.message_handler(commands=['start', 'help'])
@@ -56,9 +56,9 @@ def query_photo(inline_query):
     try:
         create_graphic()
         photo_url = 'https://aaf85aefabc9.ngrok.io/get-chart/' + \
-            str(random.randint(0, 100))
+            str(int(time()))
         thumb_url = 'https://aaf85aefabc9.ngrok.io/get-BTCUSDT/' + \
-            str(random.randint(0, 100))
+            str(int(time()))
         r = types.InlineQueryResultPhoto('1',
                                          photo_url=photo_url,
                                          thumb_url=thumb_url, photo_height=200, photo_width=200)
