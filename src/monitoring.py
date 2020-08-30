@@ -43,7 +43,9 @@ def create_chart(quotes, format, label):
     # ax.spines['left'].set_visible(False)
 
     plt.grid(color='grey', linestyle=':', linewidth=0.5)
-    plt.savefig(sys.path[0] + '\\src\\telegram\\chart.png')
+    name_image = label.replace('/', '-')
+    plt.savefig(sys.path[0] + '\\src\\telegram\\{}.png'.format(name_image))
+    plt.close(fig=fig)
 
 
 def get_date_type(timeframe):

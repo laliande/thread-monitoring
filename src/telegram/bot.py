@@ -22,7 +22,7 @@ for symbol in symbols:
     get_graphic.add(symbol)
 
 
-def create_graphic(label):
+def create_graphic(label, symbol):
     format_time = get_date_type(timeframe)
     quotes = get_ohlcv(exchange, symbol, timeframe)
     create_chart(quotes, format_time, label=label)
@@ -37,9 +37,10 @@ def send_welcome(message):
 def send_photo(message):
     for symbol in symbols:
         if message.text == symbol:
-            create_graphic(label=symbol)
+            create_graphic(label=symbol, symbol=symbol)
             bot.send_chat_action(message.chat.id, 'upload_photo')
-            img = open(sys.path[0] + '\\src\\telegram\\chart.png', 'rb')
+            img = open(
+                sys.path[0] + '\\src\\telegram\\{}.png'.format(symbol.replace('/', '-')), 'rb')
             bot.send_photo(message.chat.id, img,
                            reply_markup=get_graphic)
             img.close()
@@ -50,11 +51,11 @@ def query_photo(inline_query):
     try:
         offers = []
         for i in range(len(symbols)):
-            create_graphic(label=symbols[i])
+            create_graphic(label=symbols[i], symbol=symbols[i])
             photo_url = 'https://aaf85aefabc9.ngrok.io/get-chart/' + \
-                str(int(time()))
+                symbols[i].replace('/', '-') + '/' + str(int(time()))
             thumb_url = 'https://aaf85aefabc9.ngrok.io/get-BTCUSDT/' + \
-                str(int(time()))
+                symbols[i].replace('/', '-') + '/' + str(int(time()))
             r = types.InlineQueryResultPhoto(i,
                                              photo_url=photo_url,
                                              thumb_url=thumb_url, photo_height=200, photo_width=200)

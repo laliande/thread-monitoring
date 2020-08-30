@@ -16,13 +16,13 @@ def index():
     return Response(dumps({'response': 'up'}), status=200, mimetype='application/json')
 
 
-@app.route('/get-chart/<slag>')
-def photo(slag):
-    return send_file(sys.path[0] + '/src/telegram/chart.png', mimetype='image/jpeg')
+@app.route('/get-chart/<slag>/<slag2>')
+def photo(slag, slag2):
+    return send_file(sys.path[0] + '/src/telegram/{}.png'.format(slag), mimetype='image/jpeg')
 
 
-@app.route('/get-BTCUSDT/<slag>')
-def BTC_USDT(slag):
+@app.route('/get-BTCUSDT/<slag>/<slag2>')
+def BTC_USDT(slag, slag2):
     return send_file(sys.path[0] + '/35.png', mimetype='image/jpeg')
 
 
