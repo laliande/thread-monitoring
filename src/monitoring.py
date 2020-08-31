@@ -44,7 +44,7 @@ def create_chart(quotes, format, label):
 
     plt.grid(color='grey', linestyle=':', linewidth=0.5)
     name_image = label.replace('/', '-')
-    plt.savefig(sys.path[0] + '\\src\\telegram\\{}.png'.format(name_image))
+    plt.savefig(sys.path[0] + '\\src\\img\\{}.png'.format(name_image))
     plt.close(fig=fig)
 
 
