@@ -21,22 +21,10 @@ def photo(slag, slag2):
     return send_file(sys.path[0] + '/src/telegram/{}.png'.format(slag), mimetype='image/jpeg')
 
 
-@app.route('/get-BTCUSDT/<slag>/<slag2>')
-def BTC_USDT(slag, slag2):
+@app.route('/get-BTCUSDT/<slag>')
+def BTC_USDT(slag):
     return send_file(sys.path[0] + '/35.png', mimetype='image/jpeg')
 
 
-def run_bot():
-    try:
-        main_loop()
-    except KeyboardInterrupt:
-        print('\nExiting by user request.\n')
-        sys.exit(0)
-
-
-def run_app():
-    app.run()
-
-
 if __name__ == "__main__":
-    main_loop()
+    app.run()

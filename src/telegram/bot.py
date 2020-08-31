@@ -15,7 +15,8 @@ symbols = ['LTC/USDT', 'XRP/USDT', 'ETH/USDT', 'BNB/USDT', 'BTC/USDT']
 timeframe = '1m'
 start_message = 'Thread monitoring bot in binance'
 exchange = ccxt.binance()
-bot = telebot.TeleBot(token)
+bot = telebot.TeleBot(token, threaded=False)
+server_url = 'https://993a97479f3e.ngrok.io/'
 
 get_graphic = types.ReplyKeyboardMarkup()
 for symbol in symbols:
@@ -52,10 +53,10 @@ def query_photo(inline_query):
         offers = []
         for i in range(len(symbols)):
             create_graphic(label=symbols[i], symbol=symbols[i])
-            photo_url = 'https://aaf85aefabc9.ngrok.io/get-chart/' + \
+            photo_url = server_url + 'get-chart/' + \
                 symbols[i].replace('/', '-') + '/' + str(int(time()))
-            thumb_url = 'https://aaf85aefabc9.ngrok.io/get-BTCUSDT/' + \
-                symbols[i].replace('/', '-') + '/' + str(int(time()))
+            thumb_url = server_url + 'get-BTCUSDT/' + \
+                symbols[i].replace('/', '-')
             r = types.InlineQueryResultPhoto(i,
                                              photo_url=photo_url,
                                              thumb_url=thumb_url, photo_height=200, photo_width=200)
