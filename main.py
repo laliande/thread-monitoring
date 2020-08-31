@@ -6,6 +6,8 @@ from src.telegram.bot import main_loop
 from flask import send_file
 import sys
 from concurrent.futures import ProcessPoolExecutor
+from src.genimg import run_shedule
+
 
 app.register_blueprint(api, url_prefix='/api/v1.0')
 executor = ProcessPoolExecutor(max_workers=4)
@@ -23,8 +25,9 @@ def photo(slag, slag2):
 
 @app.route('/get-BTCUSDT/<slag>')
 def BTC_USDT(slag):
-    return send_file(sys.path[0] + 'src/img/icon-BTC.png', mimetype='image/jpeg')
+    return send_file(sys.path[0] + '/src/img/icon-BTC.png', mimetype='image/jpeg')
 
 
 if __name__ == "__main__":
+    executor.submit(run_shedule)
     app.run()
