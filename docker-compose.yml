@@ -1,0 +1,24 @@
+version: '3'
+
+volumes:
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+
+services:
+  flask: &flask
+    build:
+      context: .
+      dockerfile: ./compose/flask/Dockerfile
+    image: app
+    container_name: app
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+
+  bot:
+    build:
+      context: .
+      dockerfile: ./compose/telegram/Dockerfile
+    image: bot
+    container_name: bot

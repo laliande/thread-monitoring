@@ -2,7 +2,6 @@ from src.app import app
 from flask import Response
 from json import dumps
 from src.api.REST.routes import api
-from src.telegram.bot import main_loop
 from flask import send_file
 import sys
 from concurrent.futures import ProcessPoolExecutor
@@ -10,7 +9,7 @@ from src.genimg import run_shedule
 
 
 app.register_blueprint(api, url_prefix='/api/v1.0')
-executor = ProcessPoolExecutor(max_workers=4)
+executor = ProcessPoolExecutor(max_workers=2)
 
 
 @app.route('/health')
