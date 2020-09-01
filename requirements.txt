@@ -8,4 +8,5 @@ schedule==0.6.0
 requests==2.24.0
 pillow==7.1.2
 cloudinary==1.22.0
+redis==3.5.3
 

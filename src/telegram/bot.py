@@ -7,6 +7,7 @@ import sys
 from telebot import types
 import requests
 from time import time, sleep
+from src.conf.config import db
 
 
 exchange = ccxt.binance()
@@ -32,7 +33,9 @@ def send_photo(message):
     for symbol in symbols:
         if message.text == symbol:
             bot.send_chat_action(message.chat.id, 'upload_photo')
-            bot.send_photo(message.chat.id, 'https://res.cloudinary.com/image/upload/charts/{}.png'.format(symbol.replace('/', '-')),
+            photo_url = db.get(symbol).decode('utf-8') + \
+                '?from={}'.format(str(int(time())))
+            bot.send_photo(message.chat.id, photo_url,
                            reply_markup=get_graphic)
 
 
@@ -41,9 +44,10 @@ def query_photo(inline_query):
     try:
         offers = []
         for i in range(len(symbols)):
+            photo_url = db.get(symbols[i]).decode('utf-8') + \
+                '?from={}'.format(str(int(time())))
             r = types.InlineQueryResultPhoto(i,
-                                             photo_url='https://res.cloudinary.com/image/upload/charts/{}.png?from={}'.format(
-                                                 symbols[i].replace('/', '-'), str(int(time()))),
+                                             photo_url=photo_url,
                                              thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/v1598975952/icons/BTN0.5_evirw0.png', photo_height=200, photo_width=200)
             offers.append(r)
 

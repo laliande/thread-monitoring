@@ -6,6 +6,7 @@ import schedule
 import cloudinary.uploader
 import cloudinary
 from src.conf.config import cloudinary_conf
+from src.conf.config import db
 
 
 exchange = ccxt.binance()
@@ -31,8 +32,9 @@ def generation_img():
 def upload_on_cloudinary():
     charts = generation_img()
     for key, value in charts.items():
-        cloudinary.uploader.upload(
+        response = cloudinary.uploader.upload(
             value, public_id='charts/' + key.replace('/', '-'))
+        db.set(key, response['secure_url'])
 
 
 schedule.every(1).minutes.do(upload_on_cloudinary)
