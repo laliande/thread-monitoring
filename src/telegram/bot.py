@@ -6,7 +6,7 @@ import telebot
 import sys
 from telebot import types
 import requests
-from time import time
+from time import time, sleep
 
 
 exchange = ccxt.binance()
@@ -15,7 +15,7 @@ timeframe = '1m'
 start_message = 'Thread monitoring bot in binance'
 exchange = ccxt.binance()
 bot = telebot.TeleBot(token, threaded=False)
-server_url = 'https://55de5d60cb8c.ngrok.io/'
+server_url = 'https://edf18a1b85c1.ngrok.io'
 
 get_graphic = types.ReplyKeyboardMarkup()
 for symbol in symbols:
@@ -32,11 +32,8 @@ def send_photo(message):
     for symbol in symbols:
         if message.text == symbol:
             bot.send_chat_action(message.chat.id, 'upload_photo')
-            img = open(
-                sys.path[0] + '\\src\\img\\{}.png'.format(symbol.replace('/', '-')), 'rb')
-            bot.send_photo(message.chat.id, img,
+            bot.send_photo(message.chat.id, 'https://res.cloudinary.com/image/upload/charts/{}.png'.format(symbol.replace('/', '-')),
                            reply_markup=get_graphic)
-            img.close()
 
 
 @bot.inline_handler(lambda query: len(query.query) >= 0)
@@ -44,17 +41,14 @@ def query_photo(inline_query):
     try:
         offers = []
         for i in range(len(symbols)):
-            photo_url = server_url + 'get-chart/' + \
-                symbols[i].replace('/', '-') + '/' + str(int(time()))
-            thumb_url = server_url + 'get-BTCUSDT/' + \
-                symbols[i].replace('/', '-')
-            print(photo_url)
-            print(thumb_url)
             r = types.InlineQueryResultPhoto(i,
-                                             photo_url=photo_url,
-                                             thumb_url=thumb_url, photo_height=200, photo_width=200)
+                                             photo_url='https://res.cloudinary.com/image/upload/charts/{}.png?from={}'.format(
+                                                 symbols[i].replace('/', '-'), str(int(time()))),
+                                             thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/v1598975952/icons/BTN0.5_evirw0.png', photo_height=200, photo_width=200)
             offers.append(r)
-        bot.answer_inline_query(inline_query.id, offers, cache_time=0)
+
+        bot.answer_inline_query(inline_query.id, offers,
+                                cache_time=0)
     except Exception as e:
         print(e)
 

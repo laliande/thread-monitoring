@@ -1,9 +1,14 @@
+from flask import Flask
+from flask import send_file, make_response, Response
 import ccxt
 from datetime import datetime
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 from mpl_finance import candlestick_ohlc
 import matplotlib
+import io
+import base64
+import cloudinary.uploader
 import sys
 matplotlib.use('agg')
 
@@ -44,8 +49,13 @@ def create_chart(quotes, format, label):
 
     plt.grid(color='grey', linestyle=':', linewidth=0.5)
     name_image = label.replace('/', '-')
-    plt.savefig(sys.path[0] + '\\src\\img\\{}.png'.format(name_image))
+    plot_IObytes = io.BytesIO()
+    plt.savefig(plot_IObytes,  format='png')
+    plot_IObytes.seek(0)
+    plot_hash = base64.b64encode(plot_IObytes.read()).decode('utf8')
+    # plt.savefig(sys.path[0] + '\\src\\img\\{}.png'.format(name_image))
     plt.close(fig=fig)
+    return 'data:image/jpeg;base64,' + plot_hash
 
 
 def get_date_type(timeframe):
