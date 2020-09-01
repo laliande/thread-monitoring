@@ -7,7 +7,7 @@ import sys
 from telebot import types
 import requests
 from time import time, sleep
-from src.conf.config import db
+import cloudinary.api
 
 
 exchange = ccxt.binance()
@@ -23,6 +23,14 @@ for symbol in symbols:
     get_graphic.add(symbol)
 
 
+def get_photo_url(symbol):
+    response = cloudinary.api.resources_by_ids(
+        ['charts/{}'.format(symbol.replace('/', '-'))])
+    img = response['resources'][0]['secure_url']
+    photo_url = img + '?from={}'.format(str(int(time())))
+    return photo_url
+
+
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
     bot.reply_to(message, start_message, reply_markup=get_graphic)
@@ -33,8 +41,7 @@ def send_photo(message):
     for symbol in symbols:
         if message.text == symbol:
             bot.send_chat_action(message.chat.id, 'upload_photo')
-            photo_url = db.get(symbol).decode('utf-8') + \
-                '?from={}'.format(str(int(time())))
+            photo_url = get_photo_url(symbol)
             bot.send_photo(message.chat.id, photo_url,
                            reply_markup=get_graphic)
 
@@ -44,8 +51,7 @@ def query_photo(inline_query):
     try:
         offers = []
         for i in range(len(symbols)):
-            photo_url = db.get(symbols[i]).decode('utf-8') + \
-                '?from={}'.format(str(int(time())))
+            photo_url = get_photo_url(symbols[i])
             r = types.InlineQueryResultPhoto(i,
                                              photo_url=photo_url,
                                              thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/v1598975952/icons/BTN0.5_evirw0.png', photo_height=200, photo_width=200)
