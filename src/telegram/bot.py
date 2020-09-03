@@ -58,6 +58,24 @@ def query_photo(inline_query):
                                              photo_url=photo_url,
                                              thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/v1598975952/icons/BTN0.5_evirw0.png', photo_height=200, photo_width=200)
             offers.append(r)
+    elif inline_query.query.upper() in symbols:
+        for i in range(len(indicators)):
+            photo_url = get_photo_url(
+                inline_query.query.upper(), indicators[i])
+            r = types.InlineQueryResultPhoto(i,
+                                             photo_url=photo_url,
+                                             thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/v1598975952/icons/BTN0.5_evirw0.png', photo_height=200, photo_width=200)
+            offers.append(r)
+    else:
+        result_id = 1
+        for i in range(len(indicators)):
+            for j in range(len(symbols)):
+                photo_url = get_photo_url(symbols[j], indicators[i])
+                r = types.InlineQueryResultPhoto(result_id,
+                                                 photo_url=photo_url,
+                                                 thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/v1598975952/icons/BTN0.5_evirw0.png', photo_height=200, photo_width=200)
+                result_id += 1
+                offers.append(r)
 
     bot.answer_inline_query(inline_query.id, offers, cache_time=0)
 

@@ -75,7 +75,7 @@ def plot_oscillo_chart(data, indicator, format, label):
     plt.style.use("dark_background")
     plt.plot(color='white')
 
-    candlestick_ohlc(ax1, data, colorup="red", colordown="green", width=0.0003)
+    candlestick_ohlc(ax1, data, colorup="green", colordown="red", width=0.0003)
     ax2.plot(dates_for_oscillo, indicator, color='#9933FF')
 
     for i in [ax1, ax2]:
@@ -181,10 +181,10 @@ def create_graphic(length, exchange, symbol, timeframe, indicator):
         indicat = calculate_EMA(close_values)
     if indicator == 'MACD' or indicator == 'RSI':
         chart = plot_oscillo_chart(
-            quotes[-length:], indicat[-length:], format_time, symbol)
+            quotes[-length:], indicat[-length:], format_time, symbol + ' ' + indicator)
     elif indicator == 'SMA' or indicator == 'EMA':
         chart = plot_chart(
-            quotes[-length:], indicat[-length:], format_time, symbol)
+            quotes[-length:], indicat[-length:], format_time, symbol + ' ' + indicator)
 
     return chart
 
