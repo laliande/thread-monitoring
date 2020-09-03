@@ -91,7 +91,7 @@ def plot_oscillo_chart(data, indicator, format, label):
 
     name_image = label.replace('/', '-')
     plot_IObytes = io.BytesIO()
-    plt.savefig(plot_IObytes,  format='png')
+    plt.savefig(plot_IObytes,  format='png', dpi=100)
     plot_IObytes.seek(0)
     plot_hash = base64.b64encode(plot_IObytes.read()).decode('utf8')
     plt.close(fig=fig)
@@ -118,7 +118,7 @@ def plot_chart(data, indicator, format, label):
     ax.tick_params(color='grey', labelcolor='grey')
     name_image = label.replace('/', '-')
     plot_IObytes = io.BytesIO()
-    plt.savefig(plot_IObytes,  format='png')
+    plt.savefig(plot_IObytes,  format='png', dpi=100)
     plot_IObytes.seek(0)
     plot_hash = base64.b64encode(plot_IObytes.read()).decode('utf8')
     plt.close(fig=fig)
