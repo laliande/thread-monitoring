@@ -1,5 +1,5 @@
 
-from src.monitoring import get_date_type, get_ohlcv, create_chart
+from src.monitoring import create_graphic
 import ccxt
 import time
 import schedule
@@ -7,31 +7,27 @@ import cloudinary.uploader
 import cloudinary
 from src.conf.config import cloudinary_conf
 
-
+length = 80
 exchange = ccxt.binance()
 symbols = ['LTC/USDT', 'XRP/USDT', 'ETH/USDT', 'BNB/USDT', 'BTC/USDT']
 timeframe = '1m'
-
-
-def create_graphic(label, symbol):
-    format_time = get_date_type(timeframe)
-    quotes = get_ohlcv(exchange, symbol, timeframe)
-    chart_img = create_chart(quotes, format_time, label=label)
-    return chart_img
+indicators = ['RSI', 'MACD', 'SMA', 'EMA']
 
 
 def generation_img():
     charts_img = {}
     for i in range(len(symbols)):
-        img = create_graphic(label=symbols[i], symbol=symbols[i])
-        charts_img.update({symbols[i]: img})
+        for j in range(len(indicators)):
+            chart = create_graphic(
+                length, exchange, symbols[i], timeframe, indicators[j])
+            charts_img.update({symbols[i] + '-' + indicators[j]: chart})
     return charts_img
 
 
 def upload_on_cloudinary():
     charts = generation_img()
     for key, value in charts.items():
-        cloudinary.uploader.upload(
+        response = cloudinary.uploader.upload(
             value, public_id='charts/' + key.replace('/', '-'))
 
 

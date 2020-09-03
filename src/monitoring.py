@@ -10,7 +10,15 @@ import io
 import base64
 import cloudinary.uploader
 import sys
-matplotlib.use('agg')
+import numpy
+import pandas as pd
+import math as m
+from pyti.exponential_moving_average import exponential_moving_average as ema
+from pyti.simple_moving_average import simple_moving_average as sma
+from pyti.moving_average_convergence_divergence import moving_average_convergence_divergence as macd
+from pyti.relative_strength_index import relative_strength_index as rsi
+import numpy as np
+matplotlib.use('TkAgg')
 
 
 def get_ohlcv(exchange, symbol, timeframe):
@@ -24,38 +32,129 @@ def get_ohlcv(exchange, symbol, timeframe):
     return ohlcv
 
 
-def create_chart(quotes, format, label):
-    fig, ax = plt.subplots()
-    candlestick_ohlc(ax, quotes[-80:], width=0.0003,
-                     colorup='#9933FF', colordown='white')
-    plt.plot(color='white')
-    plt.style.use("dark_background")
-    plt.title(label, color='grey')
+def get_close_values(ohlcv):
+    close_index = 4
+    close_values = [x[close_index] for x in ohlcv]
+    return close_values
 
+
+def calculate_SMA(close_values):
+    period = 3
+    result = sma(close_values, period)
+    return result
+
+
+def calculate_RSI(close_values):
+    period = 9
+    result = rsi(close_values, period)
+    return result
+
+
+def calculate_MACD(close_values):
+    short_period = 12
+    long_period = 26
+    result = macd(data=close_values, short_period=short_period,
+                  long_period=long_period)
+    return result
+
+
+def calculate_EMA(close_values):
+    period = 2
+    result = ema(close_values, period)
+    return result
+
+
+def plot_oscillo_chart(data, indicator, format, label):
+    dates_for_oscillo = []
+    for elem in data:
+        dates_for_oscillo.append(elem[0])
+    fig, [ax1, ax2] = plt.subplots(nrows=2, ncols=1)
+    plt.title(label, color='grey')
+    plt.tight_layout()
+
+    plt.style.use("dark_background")
+    plt.plot(color='white')
+
+    candlestick_ohlc(ax1, data, colorup="red", colordown="green", width=0.0003)
+    ax2.plot(dates_for_oscillo, indicator, color='#9933FF')
+
+    for i in [ax1, ax2]:
+        i.set_facecolor('black')
+        i.spines['bottom'].set_color('grey')
+        i.spines['top'].set_color('grey')
+        i.spines['right'].set_color('grey')
+        i.spines['left'].set_color('grey')
+        i.grid(color='grey', linestyle=':', linewidth=0.5)
+        i.tick_params(color='grey', labelcolor='grey')
+        i.xaxis.set_major_formatter(mdates.DateFormatter(format))
+        i.xaxis_date()
+
+    name_image = label.replace('/', '-')
+    plot_IObytes = io.BytesIO()
+    plt.savefig(plot_IObytes,  format='png')
+    plot_IObytes.seek(0)
+    plot_hash = base64.b64encode(plot_IObytes.read()).decode('utf8')
+    plt.close(fig=fig)
+    return 'data:image/jpeg;base64,' + plot_hash
+
+
+def plot_chart(data, indicator, format, label):
+    fig, ax = plt.subplots()
+    plt.grid(color='grey', linestyle=':', linewidth=0.5)
+    candlestick_ohlc(ax, data, colorup="red", colordown="green", width=0.0003)
+    ax.xaxis.set_major_formatter(mdates.DateFormatter(format))
+    ax.xaxis_date()
+    ax2 = ax.twiny()
+    ax2.plot(indicator, color='#9933FF')
+    ax2.axis('off')
+    plt.style.use("dark_background")
+    plt.plot(color='white')
+    plt.title(label, color='grey')
     ax.set_facecolor('black')
     ax.spines['bottom'].set_color('grey')
     ax.spines['top'].set_color('grey')
     ax.spines['right'].set_color('grey')
     ax.spines['left'].set_color('grey')
     ax.tick_params(color='grey', labelcolor='grey')
-
-    ax.xaxis.set_major_formatter(mdates.DateFormatter(format))
-    ax.xaxis_date()
-
-    # ax.spines['top'].set_visible(False)
-    # ax.spines['right'].set_visible(False)
-    # ax.spines['bottom'].set_visible(False)
-    # ax.spines['left'].set_visible(False)
-
-    plt.grid(color='grey', linestyle=':', linewidth=0.5)
     name_image = label.replace('/', '-')
     plot_IObytes = io.BytesIO()
     plt.savefig(plot_IObytes,  format='png')
     plot_IObytes.seek(0)
     plot_hash = base64.b64encode(plot_IObytes.read()).decode('utf8')
-    # plt.savefig(sys.path[0] + '\\src\\img\\{}.png'.format(name_image))
     plt.close(fig=fig)
     return 'data:image/jpeg;base64,' + plot_hash
+
+
+# def create_chart(quotes, format, label):
+#     fig, ax = plt.subplots()
+#     candlestick_ohlc(ax, quotes[-80:], width=0.0003,
+#                      colorup='#9933FF', colordown='white')
+
+#     plt.plot(color='white')
+#     plt.style.use("dark_background")
+#     plt.title(label, color='grey')
+#     ax.set_facecolor('black')
+#     ax.spines['bottom'].set_color('grey')
+#     ax.spines['top'].set_color('grey')
+#     ax.spines['right'].set_color('grey')
+#     ax.spines['left'].set_color('grey')
+#     ax.tick_params(color='grey', labelcolor='grey')
+#     ax.xaxis.set_major_formatter(mdates.DateFormatter(format))
+#     ax.xaxis_date()
+
+#     # ax.spines['top'].set_visible(False)
+#     # ax.spines['right'].set_visible(False)
+#     # ax.spines['bottom'].set_visible(False)
+#     # ax.spines['left'].set_visible(False)
+
+#     plt.grid(color='grey', linestyle=':', linewidth=0.5)
+#     name_image = label.replace('/', '-')
+#     plot_IObytes = io.BytesIO()
+#     plt.savefig(plot_IObytes,  format='png')
+#     plot_IObytes.seek(0)
+#     plot_hash = base64.b64encode(plot_IObytes.read()).decode('utf8')
+#     plt.close(fig=fig)
+#     return 'data:image/jpeg;base64,' + plot_hash
 
 
 def get_date_type(timeframe):
@@ -66,3 +165,34 @@ def get_date_type(timeframe):
     elif timeframe[-1] == 'd':
         format_time = '%D'
     return format_time
+
+
+def create_graphic(length, exchange, symbol, timeframe, indicator):
+    format_time = get_date_type(timeframe)
+    quotes = get_ohlcv(exchange, symbol, timeframe)
+    close_values = get_close_values(quotes)
+    if indicator == 'SMA':
+        indicat = calculate_SMA(close_values)
+    elif indicator == 'RSI':
+        indicat = calculate_RSI(close_values)
+    elif indicator == 'MACD':
+        indicat = calculate_MACD(close_values)
+    elif indicator == 'EMA':
+        indicat = calculate_EMA(close_values)
+    if indicator == 'MACD' or indicator == 'RSI':
+        chart = plot_oscillo_chart(
+            quotes[-length:], indicat[-length:], format_time, symbol)
+    elif indicator == 'SMA' or indicator == 'EMA':
+        chart = plot_chart(
+            quotes[-length:], indicat[-length:], format_time, symbol)
+
+    return chart
+
+
+# length = 80
+# exchange = ccxt.binance()
+# symbols = ['LTC/USDT', 'XRP/USDT', 'ETH/USDT', 'BNB/USDT', 'BTC/USDT']
+# timeframe = '1m'
+# indicators = ['RSI', 'MACD', 'SMA', 'EMA']
+# chart = create_graphic(80, exchange, symbols[2], timeframe, indicators[2])
+# print(chart)
