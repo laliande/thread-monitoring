@@ -5,7 +5,7 @@ from src.api.REST.routes import api
 from flask import send_file
 import sys
 from concurrent.futures import ProcessPoolExecutor
-from src.genimg import run_shedule
+from src.charts.genimg import run_shedule
 
 
 app.register_blueprint(api, url_prefix='/api/v1.0')

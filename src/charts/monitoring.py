@@ -1,3 +1,4 @@
+from matplotlib.pyplot import gca
 from flask import Flask
 from flask import send_file, make_response, Response
 import ccxt
@@ -18,6 +19,7 @@ from pyti.simple_moving_average import simple_moving_average as sma
 from pyti.moving_average_convergence_divergence import moving_average_convergence_divergence as macd
 from pyti.relative_strength_index import relative_strength_index as rsi
 import numpy as np
+from src.charts.chart_styles import title_font, title_color, title_size, color_up, color_down, width_candle, line_color, grid_color, ax_font, grid_alpha, grid_linewidth, grid_color
 matplotlib.use('TkAgg')
 
 
@@ -64,97 +66,70 @@ def calculate_EMA(close_values):
     return result
 
 
+def disign_chart(label):
+    plt.title(label, color=title_color,
+              fontproperties=title_font, size=title_size)
+    plt.style.use("dark_background")
+    plt.plot(color='white')
+
+
+def create_candle_chart(ax, data):
+    candlestick_ohlc(ax, data, colorup=color_up,
+                     colordown=color_down, width=width_candle)
+
+
+def save_chart(label, fig):
+    name_image = label.replace('/', '-')
+    plot_IObytes = io.BytesIO()
+    plt.savefig(plot_IObytes,  format='png', dpi=200)
+    plot_IObytes.seek(0)
+    plot_hash = base64.b64encode(plot_IObytes.read()).decode('utf8')
+    plt.close(fig=fig)
+    return 'data:image/jpeg;base64,' + plot_hash
+
+
+def disign_ax(axes, format):
+    for ax in axes:
+        ax.set_facecolor('black')
+        ax.spines['bottom'].set_color('black')
+        ax.spines['top'].set_color('black')
+        ax.spines['right'].set_color('black')
+        ax.spines['left'].set_color('black')
+        ax.grid(color=grid_color, linewidth=grid_linewidth, alpha=grid_alpha)
+        for tick in ax.get_xticklabels():
+            tick.set_fontproperties(ax_font)
+        for tick in ax.get_yticklabels():
+            tick.set_fontproperties(ax_font)
+        ax.tick_params(axis='both', which='both',
+                       labelsize=8, color='grey', labelcolor='grey', left=False, right=False, top=False, bottom=False)
+        ax.xaxis.set_major_formatter(mdates.DateFormatter(format))
+        ax.xaxis_date()
+
+
 def plot_oscillo_chart(data, indicator, format, label):
     dates_for_oscillo = []
     for elem in data:
         dates_for_oscillo.append(elem[0])
     fig, [ax1, ax2] = plt.subplots(nrows=2, ncols=1)
-    plt.title(label, color='grey')
-    plt.tight_layout()
-
-    plt.style.use("dark_background")
-    plt.plot(color='white')
-
-    candlestick_ohlc(ax1, data, colorup="green", colordown="red", width=0.0003)
-    ax2.plot(dates_for_oscillo, indicator, color='#9933FF')
-
-    for i in [ax1, ax2]:
-        i.set_facecolor('black')
-        i.spines['bottom'].set_color('grey')
-        i.spines['top'].set_color('grey')
-        i.spines['right'].set_color('grey')
-        i.spines['left'].set_color('grey')
-        i.grid(color='grey', linestyle=':', linewidth=0.5)
-        i.tick_params(color='grey', labelcolor='grey')
-        i.xaxis.set_major_formatter(mdates.DateFormatter(format))
-        i.xaxis_date()
-
-    name_image = label.replace('/', '-')
-    plot_IObytes = io.BytesIO()
-    plt.savefig(plot_IObytes,  format='png', dpi=100)
-    plot_IObytes.seek(0)
-    plot_hash = base64.b64encode(plot_IObytes.read()).decode('utf8')
-    plt.close(fig=fig)
-    return 'data:image/jpeg;base64,' + plot_hash
+    disign_chart(label)
+    plt.tight_layout(pad=3, h_pad=1, w_pad=1)
+    create_candle_chart(ax1, data)
+    ax2.plot(dates_for_oscillo, indicator, color=line_color)
+    disign_ax([ax1, ax2], format)
+    img = save_chart(label, fig)
+    return img
 
 
 def plot_chart(data, indicator, format, label):
-    fig, ax = plt.subplots()
-    plt.grid(color='grey', linestyle=':', linewidth=0.5)
-    candlestick_ohlc(ax, data, colorup="red", colordown="green", width=0.0003)
-    ax.xaxis.set_major_formatter(mdates.DateFormatter(format))
-    ax.xaxis_date()
-    ax2 = ax.twiny()
-    ax2.plot(indicator, color='#9933FF')
+    fig, ax1 = plt.subplots()
+    create_candle_chart(ax1, data)
+    disign_chart(label)
+    ax2 = ax1.twiny()
+    ax2.plot(indicator, color=line_color)
     ax2.axis('off')
-    plt.style.use("dark_background")
-    plt.plot(color='white')
-    plt.title(label, color='grey')
-    ax.set_facecolor('black')
-    ax.spines['bottom'].set_color('grey')
-    ax.spines['top'].set_color('grey')
-    ax.spines['right'].set_color('grey')
-    ax.spines['left'].set_color('grey')
-    ax.tick_params(color='grey', labelcolor='grey')
-    name_image = label.replace('/', '-')
-    plot_IObytes = io.BytesIO()
-    plt.savefig(plot_IObytes,  format='png', dpi=100)
-    plot_IObytes.seek(0)
-    plot_hash = base64.b64encode(plot_IObytes.read()).decode('utf8')
-    plt.close(fig=fig)
-    return 'data:image/jpeg;base64,' + plot_hash
-
-
-# def create_chart(quotes, format, label):
-#     fig, ax = plt.subplots()
-#     candlestick_ohlc(ax, quotes[-80:], width=0.0003,
-#                      colorup='#9933FF', colordown='white')
-
-#     plt.plot(color='white')
-#     plt.style.use("dark_background")
-#     plt.title(label, color='grey')
-#     ax.set_facecolor('black')
-#     ax.spines['bottom'].set_color('grey')
-#     ax.spines['top'].set_color('grey')
-#     ax.spines['right'].set_color('grey')
-#     ax.spines['left'].set_color('grey')
-#     ax.tick_params(color='grey', labelcolor='grey')
-#     ax.xaxis.set_major_formatter(mdates.DateFormatter(format))
-#     ax.xaxis_date()
-
-#     # ax.spines['top'].set_visible(False)
-#     # ax.spines['right'].set_visible(False)
-#     # ax.spines['bottom'].set_visible(False)
-#     # ax.spines['left'].set_visible(False)
-
-#     plt.grid(color='grey', linestyle=':', linewidth=0.5)
-#     name_image = label.replace('/', '-')
-#     plot_IObytes = io.BytesIO()
-#     plt.savefig(plot_IObytes,  format='png')
-#     plot_IObytes.seek(0)
-#     plot_hash = base64.b64encode(plot_IObytes.read()).decode('utf8')
-#     plt.close(fig=fig)
-#     return 'data:image/jpeg;base64,' + plot_hash
+    disign_ax([ax1], format)
+    img = save_chart(label, fig)
+    return img
 
 
 def get_date_type(timeframe):

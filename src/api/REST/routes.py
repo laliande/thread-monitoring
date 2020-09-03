@@ -1,5 +1,4 @@
 from flask import Blueprint
-from ...monitoring import create_graphic
 import ccxt
 from flask import Response
 from flask import request

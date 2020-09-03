@@ -1,5 +1,5 @@
 
-from src.monitoring import create_graphic
+from src.charts.monitoring import create_graphic
 import ccxt
 import time
 import schedule
