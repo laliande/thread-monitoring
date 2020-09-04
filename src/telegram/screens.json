@@ -1,0 +1,189 @@
+{
+    "elements": [
+        {
+            "buttons": [
+                {
+                    "button_id": 1,
+                    "text": "Indicators"
+                },
+                {
+                    "button_id": 2,
+                    "text": "Currency"
+                },
+                {
+                    "button_id": 3,
+                    "text": "BTC/USDT"
+                },
+                {
+                    "button_id": 4,
+                    "text": "ETH/USDT"
+                },
+                {
+                    "button_id": 5,
+                    "text": "LTC/USDT"
+                },
+                {
+                    "button_id": 6,
+                    "text": "XRP/USDT"
+                },
+                {
+                    "button_id": 7,
+                    "text": "BNB/USDT"
+                },
+                {
+                    "button_id": 8,
+                    "text": "RSI"
+                },
+                {
+                    "button_id": 9,
+                    "text": "MACD"
+                },
+                {
+                    "button_id": 10,
+                    "text": "SMA"
+                },
+                {
+                    "button_id": 11,
+                    "text": "EMA"
+                },
+                {
+                    "button_id": 12,
+                    "text": "back"
+                }
+            ],
+            "messages": [
+                {
+                    "message_id": 1,
+                    "text": "Select slice"
+                },
+                {
+                    "message_id": 2,
+                    "text": "Select currency"
+                },
+                {
+                    "message_id": 3,
+                    "text": "Select indicator"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "step_id": 0,
+            "message_id": 1,
+            "buttons": [
+                {
+                    "button_id": 1,
+                    "next_step_id": 1
+                },
+                {
+                    "button_id": 2,
+                    "next_step_id": 3
+                }
+            ]
+        },
+        {
+            "step_id": 1,
+            "message_id": 3,
+            "buttons": [
+                {
+                    "button_id": 8,
+                    "next_step_id": 2
+                },
+                {
+                    "button_id": 9,
+                    "next_step_id": 2
+                },
+                {
+                    "button_id": 10,
+                    "next_step_id": 2
+                },
+                {
+                    "button_id": 11,
+                    "next_step_id": 2
+                },
+                {
+                    "button_id": 12,
+                    "next_step_id": 0
+                }
+            ]
+        },
+        {
+            "step_id": 2,
+            "message_id": 2,
+            "buttons": [
+                {
+                    "button_id": 3
+                },
+                {
+                    "button_id": 4
+                },
+                {
+                    "button_id": 5
+                },
+                {
+                    "button_id": 6
+                },
+                {
+                    "button_id": 7
+                },
+                {
+                    "button_id": 12,
+                    "next_step_id": 1
+                }
+            ]
+        },
+        {
+            "step_id": 3,
+            "message_id": 3,
+            "buttons": [
+                {
+                    "button_id": 3,
+                    "next_step_id": 4
+                },
+                {
+                    "button_id": 4,
+                    "next_step_id": 4
+                },
+                {
+                    "button_id": 5,
+                    "next_step_id": 4
+                },
+                {
+                    "button_id": 6,
+                    "next_step_id": 4
+                },
+                {
+                    "button_id": 7,
+                    "next_step_id": 4
+                },
+                {
+                    "button_id": 12,
+                    "next_step_id": 1
+                }
+            ]
+        },
+        {
+            "step_id": 4,
+            "message_id": 2,
+            "buttons": [
+                {
+                    "button_id": 8
+                },
+                {
+                    "button_id": 9
+                },
+                {
+                    "button_id": 10
+                },
+                {
+                    "button_id": 11
+                },
+                {
+                    "button_id": 12,
+                    "next_step_id": 3
+                }
+            ]
+        }
+    ]
+}

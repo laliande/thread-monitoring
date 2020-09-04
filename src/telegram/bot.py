@@ -7,6 +7,7 @@ from telebot import types
 import requests
 from time import time, sleep
 import cloudinary.api
+from src.telegram.handler_screens import get_next_screen, get_user_select
 
 
 length = 80
@@ -19,10 +20,6 @@ start_message = 'Monitoring technial indicators'
 exchange = ccxt.binance()
 bot = telebot.TeleBot(token, threaded=False)
 
-get_graphic = types.ReplyKeyboardMarkup()
-for symbol in symbols:
-    get_graphic.add(symbol)
-
 
 def get_photo_url(symbol, indicator):
     name_chart = (symbol + '-' + indicator).replace('/', '-')
@@ -33,19 +30,23 @@ def get_photo_url(symbol, indicator):
     return photo_url
 
 
-@bot.message_handler(commands=['start', 'help'])
+@bot.message_handler(commands=['start'])
 def send_welcome(message):
-    bot.reply_to(message, start_message, reply_markup=get_graphic)
+    answer = get_next_screen(message.from_user.id, message.text)
+    bot.reply_to(message, answer[0], reply_markup=answer[1])
 
 
 @bot.message_handler(content_types=['text'])
 def send_photo(message):
-    for symbol in symbols:
-        if message.text == symbol:
-            bot.send_chat_action(message.chat.id, 'upload_photo')
-            photo_url = get_photo_url(symbol)
-            bot.send_photo(message.chat.id, photo_url,
-                           reply_markup=get_graphic)
+    answer = get_next_screen(message.from_user.id, message.text)
+    if answer[0] == 'photo':
+        select = get_user_select(message.from_user.id)
+        print(select)
+        photo_url = get_photo_url(select[0], select[1])
+        bot.send_photo(
+            message.chat.id, photo_url, reply_markup=answer[1])
+    else:
+        bot.reply_to(message, answer[0], reply_markup=answer[1])
 
 
 @bot.inline_handler(lambda query: len(query.query) >= 0)
