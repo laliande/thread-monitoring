@@ -25,6 +25,7 @@ def get_photo_url(symbol, indicator):
     name_chart = (symbol + '-' + indicator).replace('/', '-')
     response = cloudinary.api.resources_by_ids(
         ['charts/{}'.format(name_chart)])
+    print(response)
     img = response['resources'][0]['secure_url']
     photo_url = img + '?from={}'.format(str(int(time())))
     return photo_url

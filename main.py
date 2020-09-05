@@ -9,7 +9,7 @@ from src.charts.genimg import run_shedule
 
 
 app.register_blueprint(api, url_prefix='/api/v1.0')
-executor = ProcessPoolExecutor(max_workers=2)
+executor = ProcessPoolExecutor(max_workers=3)
 
 
 @app.route('/health')

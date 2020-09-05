@@ -166,8 +166,6 @@ def get_next_screen(user_id, message):
 def get_user_select(user_id):
     select = select_users[user_id]
     if select[0] in ['RSI', 'MACD', 'SMA', 'EMA']:
-        print('qqqq')
-        tmp = select[0]
-        select[0] = select[1]
-        select[1] = tmp
+        format_select = [select[1], select[0]]
+        return format_select
     return select
