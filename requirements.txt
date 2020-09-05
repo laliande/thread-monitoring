@@ -7,6 +7,7 @@ pyTelegramBotAPI==3.7.3
 schedule==0.6.0
 requests==2.24.0
 pillow==7.1.2
+pandas==1.1.1
 cloudinary==1.22.0
-
+pyti==0.2.2
 

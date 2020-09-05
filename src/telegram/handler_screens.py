@@ -7,11 +7,6 @@ state_users = {}
 select_users = {}
 
 
-class StateUser():
-    def __init__(self, step_id):
-        self.step_id = step_id
-
-
 def get_all_answers():
     answers = {}
     with open(sys.path[0] + '/src/telegram/screens.json', 'r') as file:

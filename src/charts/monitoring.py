@@ -20,7 +20,7 @@ from pyti.moving_average_convergence_divergence import moving_average_convergenc
 from pyti.relative_strength_index import relative_strength_index as rsi
 import numpy as np
 from src.charts.chart_styles import title_font, title_color, title_size, color_up, color_down, width_candle, line_color, grid_color, ax_font, grid_alpha, grid_linewidth, grid_color
-matplotlib.use('TkAgg')
+matplotlib.use('Agg')
 
 
 def get_ohlcv(exchange, symbol, timeframe):
