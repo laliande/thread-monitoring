@@ -71,6 +71,7 @@ def disign_chart(label):
               fontproperties=title_font, size=title_size)
     plt.style.use("dark_background")
     plt.plot(color='white')
+    plt.tight_layout(pad=3, h_pad=1, w_pad=1)
 
 
 def create_candle_chart(ax, data):
@@ -112,7 +113,7 @@ def plot_oscillo_chart(data, indicator, format, label):
         dates_for_oscillo.append(elem[0])
     fig, [ax1, ax2] = plt.subplots(nrows=2, ncols=1)
     disign_chart(label)
-    plt.tight_layout(pad=3, h_pad=1, w_pad=1)
+    # plt.tight_layout(pad=3, h_pad=1, w_pad=1)
     create_candle_chart(ax1, data)
     ax2.plot(dates_for_oscillo, indicator, color=line_color)
     disign_ax([ax1, ax2], format)
