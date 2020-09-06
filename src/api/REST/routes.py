@@ -32,3 +32,10 @@ def get_indicators():
         point = [ohlcv[i][0], indicat[i]]
         data_chart.append(point)
     return Response(dumps({'points': data_chart}), status=200, mimetype='application/json')
+
+
+@api.route('/ohlcv', methods=['GET'])
+def ohlcv():
+    symbol = request.args.get('symbol')
+    ohlcv = get_ohlcv(exchange, symbol, timeframe, formatdate='unix')
+    return Response(dumps({'candles': ohlcv}))
