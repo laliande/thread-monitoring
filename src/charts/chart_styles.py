@@ -14,7 +14,7 @@ color_down = "red"
 width_candle = 0.0003
 
 # line chart
-line_color = '#9933FF'
+line_color = '#FFFFE0'
 
 # grid
 grid_color = 'grey'

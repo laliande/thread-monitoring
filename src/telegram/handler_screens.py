@@ -88,9 +88,8 @@ def save_change_user(now_state, user_id, message):
             users_record[1] = message
         else:
             users_record.append(message)
-        select_users.update({user_id: users_record})
-
-    if message == 'back':
+        select_users.update({user_id: users_record})    
+    if message.lower() == 'back':
         select_users.update({user_id: []})
 
 
@@ -117,6 +116,7 @@ def get_next_screen(user_id, message):
 
 
 def get_user_select(user_id):
+    print(select_users)
     select = select_users[user_id]
     if select[0] in ['RSI', 'MACD', 'SMA', 'EMA']:
         format_select = [select[1], select[0]]

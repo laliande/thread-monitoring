@@ -68,7 +68,7 @@ def calculate_EMA(close_values):
 
 def disign_chart(label):
     plt.title(label, color=title_color,
-              fontproperties=title_font, size=title_size)
+              fontproperties=title_font, size=title_size, pad=20)
     plt.style.use("dark_background")
     plt.plot(color='white')
     plt.tight_layout(pad=3, h_pad=1, w_pad=1)
