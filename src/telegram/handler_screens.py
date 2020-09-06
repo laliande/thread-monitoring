@@ -88,7 +88,7 @@ def save_change_user(now_state, user_id, message):
             users_record[1] = message
         else:
             users_record.append(message)
-        select_users.update({user_id: users_record})    
+        select_users.update({user_id: users_record})
     if message.lower() == 'back':
         select_users.update({user_id: []})
 
@@ -111,7 +111,7 @@ def get_next_screen(user_id, message):
         return answer
     answer = get_answer(0)
     text_answer = 'Invalid data '
-    state_users.pop(user_id)
+    state_users.update({user_id: 0})
     return (text_answer + answer[0], answer[1])
 
 
