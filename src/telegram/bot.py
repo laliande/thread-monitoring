@@ -11,12 +11,9 @@ from src.telegram.handler_screens import get_next_screen, get_user_select
 
 
 length = 80
-exchange = ccxt.binance()
 symbols = ['LTC/USDT', 'XRP/USDT', 'ETH/USDT', 'BNB/USDT', 'BTC/USDT']
 timeframe = '1m'
 indicators = ['RSI', 'MACD', 'SMA', 'EMA']
-
-start_message = 'Monitoring technial indicators'
 exchange = ccxt.binance()
 bot = telebot.TeleBot(token, threaded=False)
 

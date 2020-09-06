@@ -23,8 +23,12 @@ from src.charts.chart_styles import title_font, title_color, title_size, color_u
 matplotlib.use('Agg')
 
 
-def get_ohlcv(exchange, symbol, timeframe):
+def get_ohlcv(exchange, symbol, timeframe, formatdate=None):
     ohlcv = exchange.fetch_ohlcv(symbol=symbol, timeframe=timeframe)
+    if formatdate == 'unix':
+        for i in range(len(ohlcv)):
+            ohlcv[i][0] = int(ohlcv[i][0]//1000) + 10800
+        return ohlcv
     for i in range(len(ohlcv)):
         tz = 'Europe/Moscow'
         ohlcv[i][0] = int(ohlcv[i][0]//1000) + 10800
@@ -143,7 +147,7 @@ def get_date_type(timeframe):
     return format_time
 
 
-def create_graphic(length, exchange, symbol, timeframe, indicator):
+def create_graphic(exchange, symbol, timeframe, indicator, length):
     format_time = get_date_type(timeframe)
     quotes = get_ohlcv(exchange, symbol, timeframe)
     close_values = get_close_values(quotes)
@@ -161,7 +165,6 @@ def create_graphic(length, exchange, symbol, timeframe, indicator):
     elif indicator == 'SMA' or indicator == 'EMA':
         chart = plot_chart(
             quotes[-length:], indicat[-length:], format_time, symbol + ' ' + indicator)
-
     return chart
 
 

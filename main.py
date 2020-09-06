@@ -6,7 +6,7 @@ from flask import send_file
 import sys
 from concurrent.futures import ProcessPoolExecutor
 from src.charts.genimg import run_shedule
-
+from src.api.REST.routes import api
 
 app.register_blueprint(api, url_prefix='/api/v1.0')
 executor = ProcessPoolExecutor(max_workers=3)
@@ -18,5 +18,5 @@ def index():
 
 
 if __name__ == "__main__":
-    executor.submit(run_shedule)
+    # executor.submit(run_shedule)
     app.run()
