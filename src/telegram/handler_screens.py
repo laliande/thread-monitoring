@@ -33,60 +33,13 @@ def get_text_button(button_id):
 
 
 def get_keyboard_answer(buttons):
-    # Attention! NEED TEST! NOW WORKING FOR CORRENT CASES
     keyboard = types.ReplyKeyboardMarkup()
-    if len(buttons) % 3 == 0:
-        for i in range(len(buttons) // 3):
-            button_id1 = buttons[i]['button_id']
-            button_id2 = buttons[len(buttons) - 1 - i]['button_id']
-            button_id3 = buttons[len(buttons) - 3 - i]['button_id']
-            button_message1 = get_text_button(button_id1)
-            button_message2 = get_text_button(button_id2)
-            button_message3 = get_text_button(button_id3)
-            keyboard.add(button_message1, button_message2, button_message3)
-    elif len(buttons) % 2 == 0:
-        for i in range(len(buttons) // 2):
-            button_id1 = buttons[i]['button_id']
-            button_id2 = buttons[len(buttons) - i - 1]['button_id']
-            button_message1 = get_text_button(button_id1)
-            button_message2 = get_text_button(button_id2)
-            keyboard.add(button_message1, button_message2)
-    else:
-        if len(buttons) > 6:
-            remains = len(buttons) - (len(buttons) // 3)
-            for i in range(len(buttons) // 3):
-                button_id1 = buttons[i]['button_id']
-                button_id2 = buttons[len(buttons) - 1 - i]['button_id']
-                button_id3 = buttons[len(buttons) - 3 - i]['button_id']
-                button_message1 = get_text_button(button_id1)
-                button_message2 = get_text_button(button_id2)
-                button_message3 = get_text_button(button_id3)
-                keyboard.add(button_message1, button_message2, button_message3)
-            if remains % 2 == 0:
-                button_id1 = buttons[len(buttons) - 1]['button_id']
-                button_id2 = buttons[len(buttons) - 2]['button_id']
-                button_message1 = get_text_button(button_id1)
-                button_message2 = get_text_button(button_id2)
-                keyboard.add(button_message1, button_message2)
-            else:
-                button_id1 = buttons[len(buttons) - 1]['button_id']
-                button_message1 = get_text_button(button_id1)
-                keyboard.add(button_message1, button_message2)
-        else:
-            remains = len(buttons) - ((len(buttons) // 2) * 2)
-            remain_button = buttons[len(buttons) - 1]
-            buttons = buttons[0:len(buttons)-1]
-            for i in range(len(buttons) // 2):
-                button_id1 = buttons[i]['button_id']
-                button_id2 = buttons[len(buttons) - 1 - i]['button_id']
-                print(button_id1, button_id2)
-                button_message1 = get_text_button(button_id1)
-                button_message2 = get_text_button(button_id2)
-                keyboard.add(button_message1, button_message2)
-            button_id1 = remain_button['button_id']
-            print(button_id1)
-            button_message1 = get_text_button(button_id1)
-            keyboard.add(button_message1)
+    for key, value in buttons.items():
+        line = []
+        for button in value:
+            text_button = get_text_button(button['button_id'])
+            line.append(text_button)
+        keyboard.add(*line)
     return keyboard
 
 
@@ -105,10 +58,11 @@ def check_message(message, step_id):
     answers = get_all_answers()
     for action in answers['actions']:
         if action['step_id'] == step_id:
-            for button in action['buttons']:
-                text_button = get_text_button(button['button_id'])
-                if text_button == message:
-                    return True
+            for key, value in action['buttons'].items():
+                for button in value:
+                    text_button = get_text_button(button['button_id'])
+                    if text_button == message:
+                        return True
             return False
 
 
@@ -116,14 +70,15 @@ def get_next_step_id(step_id, message):
     answers = get_all_answers()
     for action in answers['actions']:
         if action['step_id'] == step_id:
-            for button in action['buttons']:
-                button_text = get_text_button(button['button_id'])
-                if button_text == message:
-                    try:
-                        next_step_id = button['next_step_id']
-                        return next_step_id
-                    except:
-                        return None
+            for key, value in action['buttons'].items():
+                for button in value:
+                    button_text = get_text_button(button['button_id'])
+                    if button_text == message:
+                        try:
+                            next_step_id = button['next_step_id']
+                            return next_step_id
+                        except:
+                            return None
 
 
 def save_change_user(now_state, user_id, message):
@@ -137,7 +92,6 @@ def save_change_user(now_state, user_id, message):
 
     if message == 'back':
         select_users.update({user_id: []})
-    print(select_users)
 
 
 def get_next_screen(user_id, message):
@@ -150,7 +104,6 @@ def get_next_screen(user_id, message):
     next_step_id = get_next_step_id(now_state, message)
     if is_correct_message:
         save_change_user(now_state, user_id, message)
-        print(next_step_id)
         if next_step_id is None:
             answer = get_answer(now_state)
             return ('photo', answer[1])
