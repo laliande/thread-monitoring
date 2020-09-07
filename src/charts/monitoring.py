@@ -147,10 +147,9 @@ def get_date_type(timeframe):
     return format_time
 
 
-def create_graphic(exchange, symbol, timeframe, indicator, length):
-    format_time = get_date_type(timeframe)
-    quotes = get_ohlcv(exchange, symbol, timeframe)
-    close_values = get_close_values(quotes)
+def get_one_indicator(indicator, ohlcv):
+    close_values = get_close_values(ohlcv)
+    indicat = []
     if indicator == 'SMA':
         indicat = calculate_SMA(close_values)
     elif indicator == 'RSI':
@@ -159,12 +158,19 @@ def create_graphic(exchange, symbol, timeframe, indicator, length):
         indicat = calculate_MACD(close_values)
     elif indicator == 'EMA':
         indicat = calculate_EMA(close_values)
+    return indicat
+
+
+def create_graphic(exchange, symbol, timeframe, indicator, length):
+    format_time = get_date_type(timeframe)
+    quotes = get_ohlcv(exchange, symbol, timeframe)
+    indicat = get_one_indicator(indicator, quotes)
     if indicator == 'MACD' or indicator == 'RSI':
         chart = plot_oscillo_chart(
-            quotes[-length:], indicat[-length:], format_time, symbol + ' ' + indicator)
+            quotes[-length:], indicat[0][-length:], format_time, symbol + ' ' + indicator)
     elif indicator == 'SMA' or indicator == 'EMA':
         chart = plot_chart(
-            quotes[-length:], indicat[-length:], format_time, symbol + ' ' + indicator)
+            quotes[-length:], indicat[0][-length:], format_time, symbol + ' ' + indicator)
     return chart
 
 
