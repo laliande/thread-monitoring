@@ -6,10 +6,10 @@ from flask import send_file
 import sys
 from concurrent.futures import ProcessPoolExecutor
 from src.charts.genimg import run_shedule
-from src.api.REST.routes import api
+from src.api.REST.routes import blueprint
 
-app.register_blueprint(api, url_prefix='/api/v1.0')
-executor = ProcessPoolExecutor(max_workers=3)
+app.register_blueprint(blueprint, url_prefix='/api/v1.0')
+executor = ProcessPoolExecutor(max_workers=2)
 
 
 @app.route('/health')
