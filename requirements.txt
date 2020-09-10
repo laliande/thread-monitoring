@@ -11,4 +11,3 @@ pandas==1.1.1
 cloudinary==1.22.0
 pyti==0.2.2
 flask_restplus==0.13.0
-
