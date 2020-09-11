@@ -21,7 +21,7 @@ def search(query):
     search_params = symbols + indicators
     result = []
     for param in search_params:
-        if query.upper() in param:
+        if query.upper() in param and len(query) > 0:
             if param in symbols:
                 for indicator in indicators:
                     photo_url = get_photo_url(param, indicator)
@@ -68,9 +68,9 @@ result_id = 1
 @bot.inline_handler(lambda query: len(query.query) >= 0)
 def query_photo(inline_query):
     global result_id
-    print(result_id)
     offers = []
     if inline_query.query.upper() in indicators:
+
         for i in range(len(symbols)):
             photo_url = get_photo_url(symbols[i], inline_query.query.upper())
             print(symbols[i].split('/'))
@@ -80,6 +80,7 @@ def query_photo(inline_query):
             result_id += 1
             offers.append(r)
     elif inline_query.query.upper() in symbols:
+
         for i in range(len(indicators)):
             photo_url = get_photo_url(
                 inline_query.query.upper(), indicators[i])
@@ -90,17 +91,22 @@ def query_photo(inline_query):
             offers.append(r)
 
     else:
+
         founded = search(inline_query.query)
+
         if len(founded) == 0:
+
             for i in range(len(indicators)):
                 for j in range(len(symbols)):
+                    print(symbols[j], indicators[i])
                     photo_url = get_photo_url(symbols[j], indicators[i])
                     r = types.InlineQueryResultPhoto(result_id,
                                                      photo_url=photo_url,
                                                      thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/icons/{}.png'.format(symbols[j].split('/')[0] + '/' + indicators[i]), photo_height=200, photo_width=200)
                     result_id += 1
                     offers.append(r)
-        else:
+        elif len(founded) > 0:
+
             for itm in founded:
                 r = types.InlineQueryResultPhoto(result_id,
                                                  photo_url=itm['photo_url'],
