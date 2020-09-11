@@ -26,12 +26,12 @@ def search(query):
                 for indicator in indicators:
                     photo_url = get_photo_url(param, indicator)
                     result.append(
-                        {'photo_url': photo_url, 'thumb_url': 'https://res.cloudinary.com/di8exrc5g/image/upload/icons/{}.png'.format(param.split('/')[0] + '/' + indicator)})
+                        {'photo_url': photo_url, 'thumb_url': get_thumb_url(param, indicator)})
             elif param in indicators:
                 for symbol in symbols:
                     photo_url = get_photo_url(symbol, param)
                     result.append(
-                        {'photo_url': photo_url, 'thumb_url': 'https://res.cloudinary.com/di8exrc5g/image/upload/icons/{}.png'.format(symbol.split('/')[0] + '/' + param)})
+                        {'photo_url': photo_url, 'thumb_url': get_thumb_url(symbol, param)})
     return result
 
 
@@ -42,6 +42,13 @@ def get_photo_url(symbol, indicator):
     img = response['resources'][0]['secure_url']
     photo_url = img + '?from={}'.format(str(int(time())))
     return photo_url
+
+
+def get_thumb_url(symbol, indicator):
+    response = cloudinary.api.resources_by_ids(
+        ['icons/{}/{}'.format(symbol.split('/')[0], indicator)])
+    img = response['resources'][0]['secure_url']
+    return img
 
 
 @bot.message_handler(commands=['start'])
@@ -69,50 +76,25 @@ result_id = 1
 def query_photo(inline_query):
     global result_id
     offers = []
-    if inline_query.query.upper() in indicators:
-
-        for i in range(len(symbols)):
-            photo_url = get_photo_url(symbols[i], inline_query.query.upper())
-            print(symbols[i].split('/'))
-            r = types.InlineQueryResultPhoto(result_id,
-                                             photo_url=photo_url,
-                                             thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/icons/{}.png'.format(symbols[i].split('/')[0] + '/' + inline_query.query.upper()), photo_height=200, photo_width=200)
-            result_id += 1
-            offers.append(r)
-    elif inline_query.query.upper() in symbols:
-
+    founded = search(inline_query.query)
+    if len(founded) == 0:
         for i in range(len(indicators)):
-            photo_url = get_photo_url(
-                inline_query.query.upper(), indicators[i])
-            r = types.InlineQueryResultPhoto(result_id,
-                                             photo_url=photo_url,
-                                             thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/icons/{}.png'.format(inline_query.query.upper().split('/')[0] + '/' + indicators[i]), photo_height=200, photo_width=200)
-            result_id += 1
-            offers.append(r)
-
-    else:
-
-        founded = search(inline_query.query)
-
-        if len(founded) == 0:
-
-            for i in range(len(indicators)):
-                for j in range(len(symbols)):
-                    print(symbols[j], indicators[i])
-                    photo_url = get_photo_url(symbols[j], indicators[i])
-                    r = types.InlineQueryResultPhoto(result_id,
-                                                     photo_url=photo_url,
-                                                     thumb_url='https://res.cloudinary.com/di8exrc5g/image/upload/icons/{}.png'.format(symbols[j].split('/')[0] + '/' + indicators[i]), photo_height=200, photo_width=200)
-                    result_id += 1
-                    offers.append(r)
-        elif len(founded) > 0:
-
-            for itm in founded:
+            for j in range(len(symbols)):
+                photo_url = get_photo_url(symbols[j], indicators[i])
+                thumb_url = get_thumb_url(symbols[j], indicators[i])
                 r = types.InlineQueryResultPhoto(result_id,
-                                                 photo_url=itm['photo_url'],
-                                                 thumb_url=itm['thumb_url'], photo_height=200, photo_width=200)
+                                                 photo_url=photo_url,
+                                                 thumb_url=thumb_url, photo_height=200, photo_width=200)
                 result_id += 1
                 offers.append(r)
+
+    else:
+        for itm in founded:
+            r = types.InlineQueryResultPhoto(result_id,
+                                             photo_url=itm['photo_url'],
+                                             thumb_url=itm['thumb_url'], photo_height=200, photo_width=200)
+            result_id += 1
+            offers.append(r)
 
     bot.answer_inline_query(inline_query.id, offers, cache_time=0)
 
