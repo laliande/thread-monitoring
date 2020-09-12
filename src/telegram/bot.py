@@ -37,14 +37,14 @@ def search(query):
 
 def get_photo_url(symbol, indicator):
     name_chart = (symbol + '-' + indicator).replace('/', '-')
-    photo_url = 'https://res.cloudinary.com/di8exrc5g/image/upload/charts/{}.png'.format(
-        name_chart) + '?from={}'.format(str(int(time())))
+    photo_url = 'https://res.cloudinary.com/di8exrc5g/image/upload/v{}/charts/{}.png'.format(
+        str(int(time())), name_chart)
     return photo_url
 
 
 def get_thumb_url(symbol, indicator):
-    thumb_url = 'http://res.cloudinary.com/di8exrc5g/image/upload/icons/{}/{}.png'.format(
-        symbol.split('/')[0], indicator) + '?from={}'.format(str(int(time())))
+    thumb_url = 'http://res.cloudinary.com/di8exrc5g/image/upload/v{}/icons/{}/{}.png'.format(str(int(time())),
+                                                                                              symbol.split('/')[0], indicator)
     return thumb_url
 
 

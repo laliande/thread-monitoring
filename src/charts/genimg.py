@@ -28,7 +28,7 @@ def upload_on_cloudinary():
     charts = generation_img()
     for key, value in charts.items():
         response = cloudinary.uploader.upload(
-            value, public_id='charts/' + key.replace('/', '-'), overwrite=True)
+            value, public_id='charts/' + key.replace('/', '-'), invalidate=True)
 
 
 schedule.every(1).minutes.do(upload_on_cloudinary)
