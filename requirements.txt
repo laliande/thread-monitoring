@@ -10,4 +10,5 @@ pillow==7.1.2
 pandas==1.1.1
 cloudinary==1.22.0
 pyti==0.2.2
-flask_restplus==0.13.0
+flask-restplus==0.13.0
+Werkzeug==0.16.1
