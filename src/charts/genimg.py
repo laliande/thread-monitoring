@@ -19,7 +19,7 @@ def generation_img():
     for i in range(len(symbols)):
         for j in range(len(indicators)):
             chart = create_graphic(
-                length, exchange, symbols[i], timeframe, indicators[j])
+                length=length, exchange=exchange, symbol=symbols[i], timeframe=timeframe, indicator=indicators[j])
             charts_img.update({symbols[i] + '-' + indicators[j]: chart})
     return charts_img
 
@@ -28,7 +28,7 @@ def upload_on_cloudinary():
     charts = generation_img()
     for key, value in charts.items():
         response = cloudinary.uploader.upload(
-            value, public_id='charts/' + key.replace('/', '-'))
+            value, public_id='charts/' + key.replace('/', '-'), overwrite=True)
 
 
 schedule.every(1).minutes.do(upload_on_cloudinary)

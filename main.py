@@ -18,5 +18,5 @@ def index():
 
 
 if __name__ == "__main__":
-    # executor.submit(run_shedule)
+    executor.submit(run_shedule)
     app.run()

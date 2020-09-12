@@ -37,18 +37,15 @@ def search(query):
 
 def get_photo_url(symbol, indicator):
     name_chart = (symbol + '-' + indicator).replace('/', '-')
-    response = cloudinary.api.resources_by_ids(
-        ['charts/{}'.format(name_chart)])
-    img = response['resources'][0]['secure_url']
-    photo_url = img + '?from={}'.format(str(int(time())))
+    photo_url = 'https://res.cloudinary.com/di8exrc5g/image/upload/charts/{}.png'.format(
+        name_chart) + '?from={}'.format(str(int(time())))
     return photo_url
 
 
 def get_thumb_url(symbol, indicator):
-    response = cloudinary.api.resources_by_ids(
-        ['icons/{}/{}'.format(symbol.split('/')[0], indicator)])
-    img = response['resources'][0]['secure_url']
-    return img
+    thumb_url = 'http://res.cloudinary.com/di8exrc5g/image/upload/icons/{}/{}.png'.format(
+        symbol.split('/')[0], indicator) + '?from={}'.format(str(int(time())))
+    return thumb_url
 
 
 @bot.message_handler(commands=['start'])
@@ -84,7 +81,8 @@ def query_photo(inline_query):
                 thumb_url = get_thumb_url(symbols[j], indicators[i])
                 r = types.InlineQueryResultPhoto(result_id,
                                                  photo_url=photo_url,
-                                                 thumb_url=thumb_url, photo_height=200, photo_width=200)
+                                                 thumb_url=thumb_url, photo_height=150, photo_width=150)
+
                 result_id += 1
                 offers.append(r)
 
@@ -92,11 +90,12 @@ def query_photo(inline_query):
         for itm in founded:
             r = types.InlineQueryResultPhoto(result_id,
                                              photo_url=itm['photo_url'],
-                                             thumb_url=itm['thumb_url'], photo_height=200, photo_width=200)
+                                             thumb_url=itm['thumb_url'], photo_height=150, photo_width=150)
             result_id += 1
             offers.append(r)
 
     bot.answer_inline_query(inline_query.id, offers, cache_time=0)
+    result_id = 1
 
 
 def main_loop():

@@ -138,6 +138,7 @@ def plot_chart(data, indicator, format, label):
 
 
 def get_date_type(timeframe):
+    format_time = ''
     if timeframe[-1] == 'h':
         format_time = '%d %H:%M'
     elif timeframe[-1] == 'm':
@@ -167,10 +168,10 @@ def create_graphic(exchange, symbol, timeframe, indicator, length):
     indicat = get_one_indicator(indicator, quotes)
     if indicator == 'MACD' or indicator == 'RSI':
         chart = plot_oscillo_chart(
-            quotes[-length:], indicat[0][-length:], format_time, symbol + ' ' + indicator)
+            quotes[-length:], indicat[-length:], format_time, symbol + ' ' + indicator)
     elif indicator == 'SMA' or indicator == 'EMA':
         chart = plot_chart(
-            quotes[-length:], indicat[0][-length:], format_time, symbol + ' ' + indicator)
+            quotes[-length:], indicat[-length:], format_time, symbol + ' ' + indicator)
     return chart
 
 
@@ -179,5 +180,6 @@ def create_graphic(exchange, symbol, timeframe, indicator, length):
 # symbols = ['LTC/USDT', 'XRP/USDT', 'ETH/USDT', 'BNB/USDT', 'BTC/USDT']
 # timeframe = '1m'
 # indicators = ['RSI', 'MACD', 'SMA', 'EMA']
-# chart = create_graphic(80, exchange, symbols[2], timeframe, indicators[2])
+# chart = create_graphic(length=80, exchange=exchange,
+#                        symbol=symbols[2], timeframe=timeframe, indicator=indicators[2])
 # print(chart)
